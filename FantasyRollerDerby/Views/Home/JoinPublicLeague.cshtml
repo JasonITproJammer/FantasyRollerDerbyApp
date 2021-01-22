@@ -1,0 +1,67 @@
+﻿@*@model FantasyRollerDerby.Models.FantasyTeam*@
+@model FantasyRollerDerby.Models._Home
+
+@{
+    ViewBag.Title = "JoinPublicLeague";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Join Public League @Model.cLeague.LeagueName</h2>
+
+@using (Html.BeginForm("JoinPublicLeague", "Home", FormMethod.Post, new { enctype = "multipart/form-data" })) 
+{
+    @Html.AntiForgeryToken()
+    <!--v Input Items v-->
+    <input class="hidden" type="submit" value="none" />
+    @Html.HiddenFor(m => m.cLeague.LeagueID)
+    @Html.HiddenFor(m => m.cLeague.SeasonID)
+    @Html.HiddenFor(m => m.cLeague.CommissionerUserID)
+    @Html.HiddenFor(m => m.cUser.UserID)
+    @Html.HiddenFor(m => m.cLeague.LeagueName)
+    <!--^ Input Items ^-->
+
+    <div class="form-horizontal">
+        <h4>FantasyTeam</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cFantasyTeam.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.Slogan, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cFantasyTeam.Slogan, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.Slogan, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.Logo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @*@Html.EditorFor(model => model.cFantasyTeam.Logo, new { htmlAttributes = new { @class = "form-control" } })*@
+                <input type="file" name="uploadFile" />
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.Logo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,45 @@
+﻿
+@using (Html.BeginForm("CreateTeam", "League", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div id="divJoinLeaguePartial" class="row">
+        <div class="col-md-3">
+            <h4>Team Name: </h4>
+        </div>
+        <div class="col-md-8">
+            <input name="FantasyTeamName" type="text" class="form-control" required />
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Team Slogan: </h4>
+        </div>
+        <div class="col-md-8">
+            <input name="FantasyTeamSlogan" type="text" class="form-control" />
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Team Logo: </h4>
+        </div>
+        <div class="col-md-4">
+            <input type="file" name="FantasyTeamLogo" />
+        </div>
+        <div class="col-md-5"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <input type="submit" id="btnCreateTeam" value="Create Team" 
+                    class="btn btn-primary" style="width:100%;" />
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+    <input type="hidden" name="FantasyTeamUserID" value="@Model.UserID" />
+    <input type="hidden" name="FantasyTeamLeagueID" value="@Model.LeagueID" />
+}

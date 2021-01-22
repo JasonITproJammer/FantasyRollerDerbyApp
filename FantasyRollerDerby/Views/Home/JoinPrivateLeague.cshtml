@@ -1,0 +1,82 @@
+﻿@*@model FantasyRollerDerby.Models.FantasyTeam*@
+@model FantasyRollerDerby.Models._Home
+
+@{
+    ViewBag.Title = "JoinPrivateLeague";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>JoinPrivateLeague</h2>
+
+
+@using (Html.BeginForm("JoinPrivateLeague", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <!--v Input Items v-->
+    <input class="hidden" type="submit" value="none" />
+    <input id="inputLeagueID" type="hidden" name="leagueID" value="none" />
+    <input id="submitJoinLeague" type="hidden" name="buttonAction" value="none" />
+    <!--^ Input Items ^-->
+
+    <div class="form-horizontal">
+        <h4>FantasyTeam</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.cFantasyTeam.FantasyTeamID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.LeagueID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cFantasyTeam.LeagueID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.LeagueID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cUser.UserID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cUser.UserID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.cUser.UserID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cFantasyTeam.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.Slogan, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cFantasyTeam.Slogan, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.Slogan, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.cFantasyTeam.Logo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.cFantasyTeam.Logo, new { htmlAttributes = new { @class = "form-control" } })
+                <input type="file" name="uploadFile" />
+                @Html.ValidationMessageFor(model => model.cFantasyTeam.Logo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

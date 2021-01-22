@@ -1,0 +1,560 @@
+﻿@model FantasyRollerDerby.Models._League
+
+@{
+    ViewBag.Title = "League";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Draft Your Destiny-->
+@*@if (ViewBag.IsDraft == true)*@
+@Html.Hidden("LeagueDraftDateTime", Model.cLeague.DraftDate)
+@Html.Hidden("LeagueDraftPickTime", Model.cLeague.DraftTimePerTeam)
+<div id="isDraft" class="hidden">
+    <div class="mobileHide">
+        <br />
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <a href="~/Draft/Index">
+                    <video class="logoGreeting draftHover" autoplay loop muted>
+                        <source src="http://jasondeutsch.info/Images/EnterDraftHeader.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </a>
+                <br />
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+
+    <div class="desktopHide">
+        <div class="row top-buffer text-center">
+            <a href="~/Draft/Index">
+                @*<img class="logoGreeting draftHover img-responsive" src="~/Images/DraftRoom.png" />*@
+                <input type="button" class="btn btn-primary" value="Enter Draft" />
+            </a>
+        </div>
+    </div>
+</div>
+<!--Draft Your Destiny-->
+
+<br /><img src="~/Images/LeagueStandings.png" class="img-responsive" /><br /><br />
+
+<!--Web App Creator Tools-->
+@if (ViewBag.Creator != null)
+{
+    <div>
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DisplayNameFor(model => model.cLeague.DraftDate)
+            </div>
+            <div class="col-md-2">
+                @Html.EditorFor(m => m.cLeague.DraftDate)
+            </div>
+            <div class="col-md-2">
+                <input type="button" onclick="UpdateDraftDateTime();"
+                       class="btn btn-primary" value="Update Draft Date Time" />
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DisplayNameFor(model => model.cSeason.DraftTimePerTeam)
+            </div>
+            <div class="col-md-2">
+                @Html.EditorFor(m => m.cSeason.DraftTimePerTeam)
+            </div>
+            <div class="col-md-2">
+                <input type="button" onclick="UpdateDraftTimePerTeam();"
+                       class="btn btn-primary" value="Update Draft Time Per Team" />
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-3">
+                <input type="button" value="ResetSeasonRosters" class="btn btn-primary" onclick="ResetSeasonRosters();" style="width:100%;" />
+            </div>
+        </div>
+        <br />
+    </div>
+}
+<!--Web App Creator Tools-->
+
+<!--Season is over Header-->
+@if (ViewBag.SeasonEnded != null)
+{
+    <h1 class="text-center">This Season Has Ended</h1>
+}
+<!--Season is over Header-->
+
+<!--Commish Tools-->
+@if (ViewBag.IsCommish != null)
+{
+    if (ViewBag.SeasonEnded != null)
+    {
+        using (Html.BeginForm("NewSeason", "league", FormMethod.Post))
+        {
+            <input type="hidden" name="userID" value="@Model.cUser.UserID" />
+            <input type="hidden" name="leagueID" value="@Model.cLeague.LeagueID" />
+            <input type="hidden" name="seasonID" value="@Model.cLeague.SeasonID" />
+            <input type="hidden" name="teamID" value="@Model.cFantasyTeam.FantasyTeamID" />
+
+            <h4 class="text-center">Create new season by clicking the button below</h4>
+            <div class="row">
+                <div class="col-md-5"></div>
+                <div class="col-md-2 newSeason">
+                    <button type="button" id="triggerNewSeason" data-toggle="modal" class="btn btn-primary" data-target="#modalNewSeason">Create New Season</button>
+                </div>
+                <div class="col-md-5"></div>
+            </div>
+
+            <!--New Season Modal-->
+            <div id="modalNewSeason" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title text-center"><b>Create New Season</b></h2>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-4 text-right">
+                                    @Html.Label("Draft Date", htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group date alignSpanDTP" id='dtpDraftDate'>
+                                            @Html.Editor("DraftDate", "draftDate", new { htmlAttributes = new { @class = "form-control" } })
+                                            <span class="input-group-addon spanCreateLeagueDTP">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-md-4 text-right">
+                                    @Html.Label("Start Date", htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group date alignSpanDTP" id='dtpStartDate'>
+                                            @Html.Editor("StartDate", "startDate", new { htmlAttributes = new { @class = "form-control" } })
+                                            <span class="input-group-addon spanCreateLeagueDTP">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-md-4 text-right">
+                                    @Html.Label("End Date", htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group date alignSpanDTP" id='dtpEndDate'>
+                                            @Html.Editor("EndDate", "endDate", new { htmlAttributes = new { @class = "form-control" } })
+                                            <span class="input-group-addon spanCreateLeagueDTP">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+
+                            <br />
+                            <div class="row text-center">
+                                <input type="submit" value="Create New Season" class="btn btn-default" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <h6 class="text-center">***click outside this window to close***<br /></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--New Season Modal-->
+        }
+    }
+
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-2">
+            @Html.ActionLink("Edit League Settings", "EditLeague", "League",
+            new
+            {
+                userID = Model.cUser.UserID,
+                leagueID = Model.cLeague.LeagueID,
+                seasonID = Model.cLeague.SeasonID,
+                teamID = Model.cFantasyTeam.FantasyTeamID
+            },
+            new { @class = "btn btn-primary" })
+        </div>
+        <div class="col-md-2 top-buffer desktopHide">
+            @Html.ActionLink("Edit Player Stats", "EditStats", "League",
+            new
+            {
+                userID = Model.cUser.UserID,
+                leagueID = Model.cLeague.LeagueID,
+                seasonID = Model.cLeague.SeasonID,
+                teamID = Model.cFantasyTeam.FantasyTeamID
+            },
+            new { @class = "btn btn-primary" })
+        </div>
+        <div class="col-md-2 mobileHide">
+            @Html.ActionLink("Edit Player Stats", "EditStats", "League",
+            new
+            {
+                userID = Model.cUser.UserID,
+                leagueID = Model.cLeague.LeagueID,
+                seasonID = Model.cLeague.SeasonID,
+                teamID = Model.cFantasyTeam.FantasyTeamID
+            },
+            new { @class = "btn btn-primary" })
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+    <br />
+}
+<!--Commish Tools-->
+
+<!--League Standings-->
+<div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+        <table id="tblLeagueStandings" class="table table-bordered table-striped table-hover tableHome table-responsive gridLeagueStandings">
+            <thead>
+                <tr>
+                    <th class="col-sm-2">Rank #</th>
+                    <th class="col-sm-2">Team Logo</th>
+                    <th class="col-sm-4">Team Name</th>
+                    <th class="col-sm-4">Team Points</th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                @{ int rowNum = 1; }
+                @foreach (var item in Model.list_LeagueStanding)
+                {//errors out right after creating a new league and trying to enter it
+                    <tr id="@item.FantasyTeamID">
+                        <td class="text-center">@rowNum</td>
+                        <td>
+                            @if (item.Logo != null && item.Logo != "")
+                            {
+                                <img id="standingsImage@(item.FantasyTeamID)" src="~/Images/TeamLogos/@item.Logo"
+                                     class="img-responsive fantasyTeamLogo" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/TeamLogos/defaultTeamLogo.png"
+                                     class="img-responsive fantasyTeamLogo" />
+                            }
+                        </td>
+                        <td>
+                            <h4>@item.Name</h4>
+                        </td>
+                        <td class="text-center">
+                            <h3><strong>@item.TotalTeamPoints</strong></h3>
+                        </td>
+                    </tr>
+                    @Html.Hidden("RowCount", rowNum = rowNum + 1)
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-2"></div>
+</div>
+<!--League Standings-->
+
+<!--Your Yeam-->
+<br /><img src="~/Images/YourTeam.png" class="img-responsive" /><br />
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-4">
+        <div class="row">
+            <div id="divLogo" class="col-md-12">
+                <img id="imgYouTeamLogo" src="~/Images/TeamLogos/@Model.cFantasyTeam.Logo" class="img-responsive TeamLogo" />
+                <input id="uploadFileInput" type="file" name="uploadFile" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <br /><br />
+                <h5>Team Name:&nbsp;</h5>
+                @Html.EditorFor(m => m.cFantasyTeam.Name, new { htmlAttributes = new { @class = "form-control fantasyTeamName" } })
+                <br />
+                <h5>Team Slogan:&nbsp;</h5>
+                @Html.EditorFor(m => m.cFantasyTeam.Slogan, new { htmlAttributes = new { @class = "form-control fantasyTeamSlogan" } })
+                <br />
+                <input type="button" id="SaveTeamInfo" value="Save Team Info" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div id="tableFantasyTeamRoster">
+    <div id="divFantasyTeamRoster" class="row">
+        @if (Model.list_Skater != null && Model.list_Skater.Count > 0)
+        {
+            <table id="tblFantasyTeamRoster" class="table table-bordered table-striped table-hover tableHome table-responsive gridMyTeam">
+                <thead>
+                    <tr>
+                        <th class="col-sm-1">Team Code</th>
+                        <th class="col-sm-1">Team Logo</th>
+                        <th class="col-sm-3">Skater Name</th>
+                        <th class="col-sm-1">Skater Number</th>
+                        <th class="col-sm-2">Skater Photo</th>
+                    </tr>
+                </thead>
+                <tbody class="table-hover">
+                    @foreach (var item in Model.list_Skater)
+                {
+                        <tr>
+                            <td class="text-center">
+                                <div class="mobileHide">
+                                    <h3><strong>@item.DerbyTeamName</strong></h3>
+                                </div>
+                                <div class="desktopHide">
+                                    <h5><strong>@item.DerbyTeamName</strong></h5>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <img src="~/Images/DerbyTeam/@item.DerbyTeamLogo" class="img-responsive teamLogo" />
+                            </td>
+                            <td>
+                                <div class="mobileHide">
+                                    <h3>@item.DerbyName</h3>
+                                </div>
+                                <div class="desktopHide text-center">
+                                    <h5>@item.DerbyName</h5>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="mobileHide">
+                                    <h3><strong>#@item.DerbyNumber</strong></h3>
+                                </div>
+                                <div class="desktopHide">
+                                    <h5><strong>#@item.DerbyNumber</strong></h5>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <img src="~/Images/Skaters/@item.Photo" class="img-responsive skaterLogo" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table id="tblFantasyTeamRoster" class="table table-bordered table-striped table-hover tableHome table-responsive">
+                <thead>
+                    <tr>
+                        <th class="col-sm-1">Team Code</th>
+                        <th class="col-sm-1">Team Logo</th>
+                        <th class="col-sm-3">Skater Name</th>
+                        <th class="col-sm-1">Skater Number</th>
+                        <th class="col-sm-2">Skater Photo</th>
+                    </tr>
+                </thead>
+            </table>
+            <h3 class="text-center">No Results</h3>
+        }
+    </div>
+</div>
+<!--Your Yeam-->
+
+<input type="hidden" id="cLeague_SeasonID" value="@Model.cLeague.SeasonID" />
+@Html.HiddenFor(m => m.cFantasyTeam.FantasyTeamID)
+@Html.HiddenFor(m => m.cFantasyTeam.Name)
+@Html.HiddenFor(m => m.cLeague.LeagueName)
+
+<!--Error Modal-->
+<button id="triggerLeagueError" data-toggle="modal" class="hidden" data-target="#modalLeagueError"></button>
+<div id="modalLeagueError" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>League Page Error</b></h2>
+            </div>
+            <div class="modal-body">
+                <div class="danger row">
+                    <h4 class="text-center">@ViewBag.LeagueError</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close the notification***<br /></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Error Modal-->
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/moment.min.js"></script>
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            console.log("Enter jQuery doc ready");
+
+            if (('@ViewBag.LeagueError') != "") {
+                //unhide modal
+                $("#modalLeagueError").removeClass("hidden");
+                $("#triggerLeagueError").click();
+            } else {
+                //hide modal or keep it hidden
+                $("#modalLeagueError").addClass("hidden");
+            }
+
+            //Upload file
+            $("#SaveTeamInfo").click(function () {
+                var teamName = $("#cFantasyTeam_Name").val();
+                var teamID = $("#cFantasyTeam_FantasyTeamID").val();
+                var teamSlogan = $("#cFantasyTeam_Slogan").val();
+                var data = new FormData();
+                data.append("teamName", teamName);
+                data.append("teamSlogan", teamSlogan);
+                data.append("teamID", teamID);
+                var files = $("#uploadFileInput").get(0).files;
+                if (files.length > 0) {
+                    data.append("TeamImage", files[0]);
+                }
+                console.log("ajax start");
+                $.ajax({
+                    type: "POST",
+                    url: "/League/SaveTeamInfo",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log("Save Team Info Success!");
+                        $("#imgYouTeamLogo").attr("src", response);
+                        $("#standingsImage" + $("#cFantasyTeam_FantasyTeamID").val()).attr("src", response);
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            //Highlight the user's team in the league standings
+            $("#@Model.cFantasyTeam.FantasyTeamID").addClass("leagueStandingsMyTeam");
+
+            //Hide or show the enter draft element
+            console.log("Start is draft process");
+            var draftDateTime = new Date($("#LeagueDraftDateTime").val());
+            console.log("draftDateTime: " + draftDateTime);
+            var beforeDraft = (30 * 60 * -1);
+            console.log("beforeDrat: " + beforeDraft);
+            var afterDraft = (@Model.cLeague.DraftTimePerTeam * @Model.cLeague.RosterSize * @Model.cLeague.MaxTeams) + (15 * 60);
+            console.log("afterDraft: " + afterDraft);
+            var inactiveDateTime = addSeconds(draftDateTime, afterDraft);
+            console.log("inactiveDateTime: " + inactiveDateTime);
+            console.log("inactiveDateTime.getTime(): " + inactiveDateTime.getTime());
+            var activeDateTime = addSeconds(draftDateTime, beforeDraft);
+            console.log("activeDateTime: " + activeDateTime);
+            console.log("activeDateTime.getTime(): " + activeDateTime.getTime());
+            var now = new Date().getTime();
+            console.log("Date().getTime(): " + now);
+            IsDraft(inactiveDateTime.getTime(), activeDateTime.getTime(), now);
+        });
+
+        //Add seconds to given date
+        function addSeconds(date, seconds) {
+            return new Date(date.getTime() + (seconds * 1000));
+        }
+
+        function IsDraft(inactiveTime, activeTime, nowTime){
+            console.log("Is it draft time?");
+            if(inactiveTime > nowTime && activeTime < nowTime){
+                console.log("Time to Draft!");
+                $("#isDraft").removeClass("hidden");
+            } else {
+                console.log("Nope, its NOT time to draft");
+            }
+        }
+
+        function UpdateDraftDateTime() {
+            var draftDateTime = $("#cLeague_DraftDate").val();
+            var seasonID = $("#cLeague_SeasonID").val();
+            $.ajax({
+                type: "POST",
+                url: "/League/UpdateDraftDateTime",
+                data: { draftDateTime: draftDateTime, seasonID: seasonID },
+                success: function (response) {
+                    console.log(response);
+                }
+            })
+        }
+
+        function UpdateDraftTimePerTeam() {
+            var draftTimePerTeam = $("#cSeason_DraftTimePerTeam").val();
+            var seasonID = $("#cLeague_SeasonID").val();
+            $.ajax({
+                type: "POST",
+                url: "/League/UpdateDraftTimePerTeam",
+                data: { draftTimePerTeam: draftTimePerTeam, seasonID: seasonID },
+                success: function (response) {
+                    console.log(response);
+                }
+            })
+        }
+
+        function ResetSeasonRosters() {
+            var seasonID = $("#cLeague_SeasonID").val();
+            $.ajax({
+                type: "POST",
+                url: "/League/ResetSeasonRosters",
+                data: { seasonID: seasonID },
+                success: function (response) {
+                    console.log(response);
+                }
+            })
+        }
+
+        //Draft Date datepicker
+        //https://eonasdan.github.io/bootstrap-datetimepicker/
+        //$("#triggerNewSeason").click(function () {
+        //    $("#dtpStartDate").data("DateTimePicker").minDate(moment(e.date));
+        //});
+        $('#dtpDraftDate').datetimepicker({
+            useCurrent: true,
+            keepOpen: false
+        });
+        $('#dtpDraftDate').on("dp.change", function (e) {
+            $("#dtpStartDate").data("DateTimePicker").minDate(moment(e.date).add('days', 1));
+            $("#dtpEndDate").data("DateTimePicker").minDate(moment(e.date).add('days', 2));
+        });
+
+        //Start Date datepicker
+        $('#dtpStartDate').datetimepicker({
+            format: "L",
+            useCurrent: false,
+            keepOpen: false
+        });
+        $('#dtpStartDate').on("dp.change", function (e) {
+            $("#dtpEndDate").data("DateTimePicker").minDate(moment(e.date).add('days', 1));
+        });
+
+        //End Date datepicker
+        $('#dtpEndDate').datetimepicker({
+            format: "L",
+            useCurrent: false,
+            keepOpen: false
+        });
+
+    </script>
+}

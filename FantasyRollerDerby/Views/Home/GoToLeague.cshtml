@@ -1,0 +1,163 @@
+﻿@model FantasyRollerDerby.Models.League
+
+@{
+    ViewBag.Title = "GoToLeague";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>GoToLeague</h2>
+
+<div>
+    <h4>League</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CommissionerUserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommissionerUserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FantasyTeamID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FantasyTeamID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommissionerUserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommissionerUserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TeamName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TeamName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Logo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Logo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Slogan)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Slogan)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LeagueName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LeagueName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SeasonID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SeasonID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaxTeams)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaxTeams)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Teams)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Teams)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DraftDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DraftDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateByUserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateByUserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RetireByUserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RetireByUserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RetireDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RetireDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.isPublic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.isPublic)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.LeagueID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

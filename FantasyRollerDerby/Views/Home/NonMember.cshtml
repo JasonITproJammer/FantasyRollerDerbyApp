@@ -1,0 +1,420 @@
+﻿@model FantasyRollerDerby.Models._Home
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<!--Error Modal-->
+<button id="triggerHomeError" data-toggle="modal" class="hidden" data-target="#modalHomeError"></button>
+<div id="modalHomeError" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>Home Page Error</b></h2>
+            </div>
+            <div class="modal-body">
+                <div class="danger row">
+                    <h4 id="headerErrorModal" class="text-center">@ViewBag.HomeError</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close the notification***<br /></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Error Modal-->
+<!--v Password Modal v-->
+<button id="triggerPasswordModal" data-toggle="modal" class="hidden" data-target="#modalPassword"></button>
+<div id="modalPassword" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>Please Enter Password</b></h2>
+            </div>
+            <div id="modalPasswordBody" class="modal-body">
+                <p id="searchResults" class="hidden"></p>
+                <div class="row">
+                    <div class="col-sm-5"></div>
+                    <div id="divAjaxLoader" class="hidden col-sm-3"></div>
+                    <div class="col-sm-4"></div>
+                </div>
+                <div class="row">
+                    <p id="errorPasswordSubmit" class="hidden danger text-center"></p>
+                </div>
+                <div id="divHideWhileLoading" class="row">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-4">
+                        <input id="textPassword" type="password" name="iPassword" class="form-control" placeholder="Enter Password..." required />
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" id="btnPasswordVerify" class="btn btn-primary left" onclick="VerifyPasswordSubmit();">Submit</button>
+                    </div>
+                    <div class="col-sm-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close***</h6>
+                <button type="button" id="closePasswordModal" data-dismiss="modal" class="hidden">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--^ Password Modal ^-->
+<!--v CoverFlow v-->
+@*<div style="background-color:black;">
+        <div class="row">
+            <div class="col-xs-12">
+                @Html.Partial("_CoverFlow")
+            </div>
+        </div>
+    </div>*@
+<!--^ CoverFlow ^-->
+<!--Join A League Modal-->
+<button id="triggerJoinLeagueModal" data-toggle="modal"
+        class="hidden" data-target="#modalJoinLeague"
+        data-backdrop="static"></button>
+<div id="modalJoinLeague" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>Create Your Team</b></h2>
+            </div>
+            <div id="modalJoinLeagueBody" class="modal-body">
+                <div id="rowAjaxLoaderJoinLeague" class="row hidden">
+                    <div class="col-sm-5"></div>
+                    <div id="divAjaxLoaderJoinLeague" class="col-sm-3"></div>
+                    <div class="col-sm-4"></div>
+                </div>
+                <div id="divJoinLeague" class="hidden">
+                    @*@Html.Partial("_JoinLeague")*@
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeJoinLeagueModal" data-dismiss="modal" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Join A League Modal-->
+
+<fieldset id="HomeFormContainer" name="HomeFormContainer">
+    @Html.AntiForgeryToken()
+    <!--v Input Items v-->
+    <input id="inputLeagueID" type="hidden" name="leagueID" value="none" />
+    <input id="inputBtnAction" type="hidden" name="buttonAction" value="none" />
+    <input id="submitJoinLeague" type="submit" class="hidden" />
+    <!--^ Input Items ^-->
+    <!--v Welcome Message v-->
+    <div class="row mobileHide">
+        <video class="logoGreeting" autoplay loop>
+            <source src="http://jasondeutsch.info/Images/Header_Video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="row">
+        <a href="~/Account/Register"><img src="~/Images/NONMember_header.jpg" class="logoGreeting" /></a>
+    </div>
+    <!--^ Welcome Message ^-->
+    <!--v Public Leagues v-->
+    <div class="row">
+        <br /><br /><br />
+        <img src="~/Images/PublicLeagues.png" class="img-responsive" />
+        <br />
+        <div id="divPublicLeaguesSearchGrid mobileText">
+            @if (Model.list_cLeaguePublic != null && Model.list_cLeaguePublic.Count > 0)
+            {
+                WebGrid gridPublicLeagues = new WebGrid(Model.list_cLeaguePublic, rowsPerPage: 5,
+                    sortFieldName: "gridPublicLeaguesSort", ajaxUpdateContainerId: "divPublicLeaguesSearchGrid");
+                var rowNum = 0;
+            @gridPublicLeagues.GetHtml(tableStyle: "table table-bordered table-striped table-hover tableHome gridPublicLeagues table-responsive",
+         htmlAttributes: new { id = "gridPublicLeagues" },
+         headerStyle: "",
+         footerStyle: "",
+         alternatingRowStyle: "",
+         columns: gridPublicLeagues.Columns(
+             gridPublicLeagues.Column("LeagueName", header: "League Name",
+                 format:
+            @<div>
+                @item.LeagueName
+                @Html.Hidden("RowNumber", rowNum = rowNum + 1)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].LeagueID", (int)item.LeagueID)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].SeasonID", (int)item.SeasonID)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].CommissionerUserID", (int)item.CommissionerUserID)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].CommissionerUserName", (string)item.CommissionerUserName)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].LeagueName", (string)item.LeagueName)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].MaxTeams", (int)item.MaxTeams)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].Teams", (int)item.Teams)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].DraftDate", (DateTime)item.DraftDate)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].StartDate", (DateTime)item.StartDate)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].EndDate", (DateTime)item.EndDate)
+                @Html.Hidden("list_cLeaguePublic[" + (rowNum - 1) + "].isPublic", (Boolean)item.isPublic)
+            </div>
+                ),
+            gridPublicLeagues.Column("MaxTeams", header: "Max Teams", format: (item) => item.MaxTeams),
+            gridPublicLeagues.Column("Teams", header: "Teams", format: (item) => item.Teams),
+            gridPublicLeagues.Column("DraftDate", header: "Draft Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.DraftDate)),
+            gridPublicLeagues.Column("StartDate", header: "Start Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.StartDate)),
+            gridPublicLeagues.Column("EndDate", header: "End Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.EndDate)),
+            gridPublicLeagues.Column("Join", header: " ",
+                format:
+            @<div>
+                @if (item.Teams < item.MaxTeams)
+                    {
+            <button class="btn btn-link" onclick="JoinPublicLeague('@item.LeagueID');">Join</button>
+                    }
+                    else
+                    {
+            <button class="btn btn-link" disabled>Join</button>
+                    }
+
+            </div>
+                )
+            ))
+            }
+            else
+            {
+            <table id="gridPublicLeagues" class="table table-bordered table-striped table-hover tableHome table-responsive">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col" class="text-center">League Name</th>
+                        <th scope="col" class="text-center">Max Teams</th>
+                        <th scope="col" class="text-center">Teams</th>
+                        <th scope="col" class="text-center">Draft Date</th>
+                        <th scope="col" class="text-center">Start Date</th>
+                        <th scope="col" class="text-center">End Date</th>
+                    </tr>
+                </thead>
+            </table>
+            <h3 class="text-center">No Results</h3>
+            }
+        </div>
+        @Html.ActionLink(linkText: "Create League", actionName: "CreateLeague", controllerName: "League",
+            routeValues: new { leagueType = "public" }, htmlAttributes: new { @class = "btn btn-primary pull-right" })
+    </div>
+    <!--^ Public Leagues ^-->
+    <br /><br />
+    <!--v Private Leagues v-->
+    <div class="row">
+        <img src="~/Images/PrivateLeagues.png" class="img-responsive" />
+        <br />
+        <div id="divPrivateLeaguesSearchGrid mobileText">
+            @if (Model.list_cLeaguePrivate != null && Model.list_cLeaguePrivate.Count > 0)
+            {
+                WebGrid gridPrivateLeagues = new WebGrid(Model.list_cLeaguePrivate, rowsPerPage: 5,
+                    sortFieldName: "gridPrivateLeaguesSort", ajaxUpdateContainerId: "divPrivateLeaguesSearchGrid");
+                var rowNum = 0;
+            @gridPrivateLeagues.GetHtml(tableStyle: "table table-bordered table-striped table-hover tableHome gridPrivateLeagues table-responsive",
+                htmlAttributes: new { id = "gridPrivateLeagues" },
+                headerStyle: "",
+                footerStyle: "",
+                alternatingRowStyle: "",
+                columns: gridPrivateLeagues.Columns(
+                gridPrivateLeagues.Column("LeagueName", header: "League Name",
+                    format:
+            @<div>
+                @item.LeagueName
+                @Html.Hidden("RowNumber", rowNum = rowNum + 1)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].LeagueID", (int)item.LeagueID)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].SeasonID", (int)item.SeasonID)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].CommissionerUserID", (int)item.CommissionerUserID)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].CommissionerUserName", (string)item.CommissionerUserName)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].LeagueName", (string)item.LeagueName)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].MaxTeams", (int)item.MaxTeams)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].Teams", (int)item.Teams)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].DraftDate", (DateTime)item.DraftDate)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].StartDate", (DateTime)item.StartDate)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].EndDate", (DateTime)item.EndDate)
+                @Html.Hidden("list_cLeaguePrivate[" + (rowNum - 1) + "].isPublic", (Boolean)item.isPublic)
+            </div>
+                ),
+                gridPrivateLeagues.Column("MaxTeams", header: "Max Teams", format: (item) => item.MaxTeams),
+                gridPrivateLeagues.Column("Teams", header: "Teams", format: (item) => item.Teams),
+                gridPrivateLeagues.Column("DraftDate", header: "Draft Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.DraftDate)),
+                gridPrivateLeagues.Column("StartDate", header: "Start Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.StartDate)),
+                gridPrivateLeagues.Column("EndDate", header: "End Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.EndDate)),
+                gridPrivateLeagues.Column("Join", header: " ",
+                format:
+            @<div>
+                @if (item.Teams < item.MaxTeams)
+                    {
+            <button type="button" class="btn btn-link" onclick="JoinPrivateLeague('verify', '@item.LeagueID');">Join</button>
+                    }
+                    else
+                    {
+            <button type="button" class="btn btn-link" disabled>Join</button>
+                    }
+
+            </div>
+                )))
+            }
+            else
+            {
+            <table id="gridPrivateLeagues" class="table table-bordered table-striped table-hover tableHome table-responsive">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col" class="text-center">League Name</th>
+                        <th scope="col" class="text-center">Max Teams</th>
+                        <th scope="col" class="text-center">Teams</th>
+                        <th scope="col" class="text-center">Draft Date</th>
+                        <th scope="col" class="text-center">Start Date</th>
+                        <th scope="col" class="text-center">End Date</th>
+                    </tr>
+                </thead>
+            </table>
+            <h3 class="text-center">No Results</h3>
+            }
+        </div>
+        @Html.ActionLink(linkText: "Create League", actionName: "CreateLeague", controllerName: "League",
+                routeValues: new { leagueType = "private" }, htmlAttributes: new { @class = "btn btn-primary pull-right" })
+    </div>
+    <!--^ Private Leagues ^-->
+</fieldset>
+
+@*}*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/moment.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (('@ViewBag.HomeError') != "") {
+                //unhide modal
+                $("#modalHomeError").removeClass("hidden");
+                $("#triggerHomeError").click();
+            } else {
+                //hide modal or keep it hidden
+                $("#modalHomeError").addClass("hidden");
+            }
+        });
+
+        function JoinPublicLeague(leagueID) {
+            $("#inputLeagueID").val(leagueID);
+            $("#inputBtnAction").val("public");
+
+            //$("#submitJoinLeague").click();
+            $("#triggerJoinLeagueModal").click();
+            $("#rowAjaxLoaderJoinLeague").removeClass("hidden");
+            $("#divAjaxLoaderJoinLeague").removeClass("hidden");
+            $("#divAjaxLoaderJoinLeague").addClass("loader");
+            CreateLeagueNonMember();
+        }
+
+        function JoinPrivateLeague(action, leagueID) {
+            if (action == "verify") {
+                $("#inputLeagueID").val(leagueID);
+                $("#inputBtnAction").val("private");
+                $("#triggerPasswordModal").click();
+            }
+            else if (action == "success") {
+                if ($("#searchResults").text() == "pass") {
+                    //alert("Pass: " + $("#searchResults").text())
+                    $("#closePasswordModal").click();
+
+                    //$("#submitJoinLeague").click();
+                    $("#triggerJoinLeagueModal").click();
+                    $("#rowAjaxLoaderJoinLeague").removeClass("hidden");
+                    $("#divAjaxLoaderJoinLeague").removeClass("hidden");
+                    $("#divAjaxLoaderJoinLeague").addClass("loader");
+                    CreateLeagueNonMember();
+                }
+                else {
+                    //alert("Else: " + $("#searchResults").text())
+                    $("#textPassword").val("");
+                    $("#errorPasswordSubmit").removeClass("hidden").text("Password did not match our records.");
+                    $("#divAjaxLoader").addClass("hidden").removeClass("loader");
+                    $("#divHideWhileLoading").removeClass("hidden");
+                }
+            }
+            else if (action == "fail") {
+                $("#textPassword").val("");
+                $("#errorPasswordSubmit").removeClass("hidden").text($("#searchResults").text());
+                $("#divAjaxLoader").addClass("hidden").removeClass("loader");
+                $("#divHideWhileLoading").removeClass("hidden");
+            }
+        }
+
+        function VerifyPasswordSubmit() {
+            if ($("#textPassword").val() == "") {
+                $("#errorPasswordSubmit").text("You need to enter a password you goon!");
+                $("#errorPasswordSubmit").removeClass("hidden");
+            }
+            else {
+                $("#divHideWhileLoading").addClass("hidden");
+                $("#divAjaxLoader").removeClass("hidden").addClass("loader");
+                $("#errorPasswordSubmit").addClass("hidden").text("");
+                SubmitPassword();
+            }
+        }
+
+        function SubmitPassword() {
+            //alert("#submitPassword clicked");
+            var pwd = $("#textPassword").val();
+            var leagueID = $("#inputLeagueID").val();
+            $.ajax({
+                type: "GET",
+                url: "/Home/SubmitPassword",
+                data: { pwd: pwd, LeagueID: leagueID },
+                success: function (response) {
+                    //alert("Success: " + response);
+                    $("#searchResults").text(response);
+                    JoinPrivateLeague("success", '0');
+                },
+                failure: function (response) {
+                    //alert("Failure: " + response);
+                    $("#searchResults").text(response);
+                    JoinPrivateLeague("fail", '0');
+                }
+            })
+        }
+
+        function CreateLeagueNonMember() {
+            console.log("CreateLeagueNonMember[ENTER]");
+            $("#divJoinLeague").html("");
+            $.ajax({
+                type: "POST",
+                url: "/Home/Index",
+                data: $("#HomeFormContainer").serialize(),
+                //dataType: "application/json",
+                success: function (response) {
+                    if (response.substring(0, 3) == "You") {
+                        console.log("CreateLeagueNonMember SUCCESS: User is already apart of this league");
+                        $("#divAjaxLoaderJoinLeague").addClass("hidden").removeClass("loader");
+                        $("#rowAjaxLoaderJoinLeague").addClass("hidden");
+                        $("#divJoinLeague").addClass("hidden");
+                        $("#closeJoinLeagueModal").click();
+                        $("#headerErrorModal").text(response);
+                        $("#modalHomeError").removeClass("hidden");
+                        $("#triggerHomeError").click();
+                    }
+                    else if (response.substring(0, 3) == "ERR") {
+                        console.log("CreateLeagueNonMember SUCCESS: Unknown error occurred");
+                        $("#divAjaxLoaderJoinLeague").addClass("hidden").removeClass("loader");
+                        $("#rowAjaxLoaderJoinLeague").addClass("hidden");
+                        $("#divJoinLeague").addClass("hidden");
+                        $("#closeJoinLeagueModal").click();
+                        $("#headerErrorModal").text(response);
+                        $("#modalHomeError").removeClass("hidden");
+                        $("#triggerHomeError").click();
+                    }
+                    else {
+                        console.log("CreateLeagueNonMember SUCCESS!");
+                        $("#divAjaxLoaderJoinLeague").addClass("hidden").removeClass("loader");
+                        $("#rowAjaxLoaderJoinLeague").addClass("hidden");
+                        $("#divJoinLeague").removeClass("hidden");
+                        $("#divJoinLeague").html(response);
+                    }
+                },
+                error: function (response) {
+                    console.log("CreateLeagueNonMember ERROR!");
+                    $("#divJoinLeague").removeClass("hidden");
+                    $("#divAjaxLoaderJoinLeague").addClass("hidden").removeClass("loader");
+                    $("#rowAjaxLoaderJoinLeague").addClass("hidden");
+                    $("#divJoinLeaguePartial").addClass("hidden");
+                    $("#JoinLeagueError").removeClass("hidden");
+                    $("#divJoinLeague").html(response);
+                }
+            })
+        }
+    </script>
+}

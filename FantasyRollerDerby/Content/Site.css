@@ -1,0 +1,228 @@
+﻿/*****************************************************
+------------------- MOBILE ---------------------------
+******************************************************/
+@media only screen and (max-width: 426px) {
+    .mobileHide{display: none !important;}
+    .mobileText{font-size: 10px !important;}
+}
+@media only screen and (min-width: 426px) {
+    .desktopHide{display:none !important;}
+}
+    
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+table td {
+    vertical-align: middle !important;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.modalError{
+    background-color: red;
+    color:white;
+}
+
+.tableHome thead a, .tableHome thead th {
+    color:white;
+}
+
+.tableHome thead {
+    background-color:#000000;
+}
+
+.tableHome tfoot {
+    background-color:#e6e6e6;
+}
+
+.gridPublicLeagues tbody tr:hover td{
+    background:#a1b4bc;
+}
+.gridPrivateLeagues tbody tr:hover td{
+    background:#c5d2ac;
+}
+
+.danger {
+    background-color: #ffdddd;
+    border-left: 6px solid #f44336;
+    vertical-align: middle;
+}
+
+/*Site loader*/
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.memberListLogo {
+    width: 50px;
+    height: 65px;
+    margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
+.logoNav {
+    height:100%;
+}
+
+.navbar-brand{
+    padding: 0px 0px 0px 0px;
+}
+
+.logoGreeting{
+    width: 100%;
+    margin-top: 5px;
+}
+
+.headerText{
+    background-color:aliceblue;
+    text-align:center;
+}
+
+.drafted {
+        background-color: lightgreen;
+        font-weight: bolder;
+    }
+
+.OnTheClock{
+    background-color:orange !important;
+}
+
+.draftHeaders{
+    display: inline;
+}
+
+.skaterChosen {
+    background-color: greenyellow !important;
+    color: black !important;
+    font-weight: bolder !important;
+}
+
+.colorBlue{
+    background-color: lightskyblue !important;
+}
+
+.alignSpanDTP{
+    display: inline-flex !important;
+    width:100%;
+}
+
+.spanCreateLeagueDTP{
+    width: initial !important;
+}
+
+.center{
+    text-align: center;
+}
+
+.linkBlue{
+    color:blue;
+}
+
+a.draftDestiny{
+    /*background: url(../Images/DraftYourDestiny.png) no-repeat;*/
+    background: url(../Images/EnterDraftHeader.mp4) repeat;
+    display: block;
+    width: 100%;
+    height: 125px;
+    text-indent: -9999px; /* hides the link text */
+}
+
+.leagueStandingsMyTeam{
+    background-color: lightsteelblue !important;
+}
+
+.gridLeagueStandings tbody tr:hover td{
+    background-color:lightyellow;
+}
+
+.gridMyTeam tbody tr:hover td{
+    background-color:darkseagreen;
+}
+
+.teamLogo{
+    width:100%;
+    max-width:160px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.skaterLogo{
+    width:100%;
+    max-width: 160px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.fantasyTeamLogo{
+    width:100%;
+    max-width: 160px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.fantasyTeamSlogan{
+    width:100% !important;
+    min-height:100px !important;
+}
+
+.fantasyTeamName{
+    width:100% !important;
+}
+
+.draftHover:hover{
+    opacity:0.8;
+}
+
+.yourTeam{
+    background-color:yellow !important;
+}
+
+.draftTeamLogo{
+    max-height: 300px;
+}
+
+.newSeason{
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.top-buffer{
+    margin: 10px 0px 0px 0px;
+}

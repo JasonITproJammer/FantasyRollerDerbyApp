@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodland Fantasy Roller Derby</title>
+    <meta name="description" content="Goodland Fantasy Roller Derby">
+    <meta name="keywords" content="Wisconsin, Roller Derby, MRDA, Mens Roller Derby, WIFTDA, Womens Roller Derby, Fantasy Roller Derby, Goodland, Milwaukee">
+    <meta name="author" content="Bloody Bearon">
+    <link rel="icon" href="~/Images/ChompIcon.ico">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" style="float:left;">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @*@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+                <a href="~/Home/Index" class="navbar-brand"><img src="~/Images/GoodLandLogo_white.png" class="logoNav" /></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Leagues", "Leagues", "Home")</li>
+                    <li>@Html.ActionLink("Teams", "Teams", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Goodland Fantasy Roller Derby</p>
+        </footer>
+    </div>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,185 @@
+﻿@model FantasyRollerDerby.Models._FantasyTeam
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Error Modal-->
+<button id="triggerHomeError" data-toggle="modal" class="hidden" data-target="#modalHomeError"></button>
+<div id="modalHomeError" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>Fantasy Team Page Error</b></h2>
+            </div>
+            <div class="modal-body">
+                <div class="danger row">
+                    <h4 class="text-center">@ViewBag.FantasyTeamError</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close the notification***<br /></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Error Modal-->
+
+<h2>Fantasy Team: @Model.cFantasyTeam.Name</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.LeagueID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.LeagueID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.SeasonID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.SeasonID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.SkaterID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.SkaterID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.UserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.UserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.Slogan)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.Slogan)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.Logo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.Logo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.CreateByUserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.CreateByUserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.CreateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.RetireByUserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.RetireByUserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.RetireDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.RetireDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cFantasyTeam.DraftPickNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cFantasyTeam.DraftPickNumber)
+        </dd>
+    </dl>
+</div>
+
+<input id="btnGetTopFiveRows" class="btn btn-primary" type="button" value="Get top 5 rows Skater ID and Name" />
+
+<div id="divFantasyTeamRoster" class="row">
+    @if (Model.list_cSkater != null && Model.list_cSkater.Count > 0)
+    {
+        <table id="tblFantasyTeamRoster" class="table table-responsive">
+            <thead class="colorBlue">
+                <tr>
+                    <th class="col-sm-1">Team Code</th>
+                    <th class="col-sm-1">Team Logo</th>
+                    <th class="col-sm-3">Skater Name</th>
+                    <th class="col-sm-1">Skater Number</th>
+                    <th class="col-sm-2">Skater Photo</th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                @foreach (var item in Model.list_cSkater)
+                {
+                    <tr>
+                        <td>@item.DerbyTeamNameCode</td>
+                        <td>@item.DerbyTeamLogo</td>
+                        <td>@item.DerbyName</td>
+                        <td>@item.DerbyNumber</td>
+                        <td>@item.Photo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section scripts {
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (('@ViewBag.FantasyTeamError') != "") {
+                //unhide modal
+                $("#modalHomeError").removeClass("hidden");
+                $("#triggerHomeError").click();
+            } else {
+                //hide modal or keep it hidden
+                $("#modalHomeError").addClass("hidden");
+            }
+
+            //Make table rows drag and drop abled
+            $('#tblFantasyTeamRoster tbody').sortable().disableSelection();
+
+            $("#btnGetTopFiveRows").click(function () {
+                $("#tblFantasyTeamRoster tbody tr").removeClass("skaterChosen");
+                $("#tblFantasyTeamRoster tbody tr:lt(5)").addClass("skaterChosen");
+            });
+        });
+    </script>
+}

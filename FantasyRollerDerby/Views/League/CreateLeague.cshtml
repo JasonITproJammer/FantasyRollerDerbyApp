@@ -1,0 +1,331 @@
+﻿@model FantasyRollerDerby.Models._League
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br /><img src="~/Images/CreateALeague.png" class="img-responsive" /><br /><br />
+<!--Error Modal-->
+<button id="triggerLeagueError" data-toggle="modal" class="hidden" data-target="#modalLeagueError"></button>
+<div id="modalLeagueError" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>League Page Error</b></h2>
+            </div>
+            <div class="modal-body">
+                <div class="danger row">
+                    <h4 class="text-center">@ViewBag.LeagueError</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close the notification***<br /></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Error Modal-->
+
+<fieldset id="CreateLeagueForm" name="CreateLeagueForm">
+    <div>
+        @Html.HiddenFor(m => m.cUser.UserID)
+        @Html.HiddenFor(m => m.cUser.AspNetUserID)
+        @Html.HiddenFor(m => m.cLeague.LeagueID)
+        <input type="hidden" name="isPrivate" value="@ViewBag.LeaguePrivate" />
+        <input id="rowNum" type="hidden" value="1" name="rowNum" />
+
+        <div class="row">
+            <div class="col-md-2 text-right">
+                @Html.Label("League Name", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.cLeague.LeagueName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-2 text-right">
+                @Html.Label("Max Teams", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.cLeague.MaxTeams, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2 text-right">
+                @Html.Label("Draft Time Per Team (seconds)", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.cLeague.DraftTimePerTeam, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-2 text-right">
+                @Html.Label("Roster Size", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.cLeague.RosterSize, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2 text-right">
+                @Html.Label("Draft Date", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="input-group date alignSpanDTP" id='dtpDraftDate'>
+                        @Html.EditorFor(model => model.cLeague.DraftDate, new { htmlAttributes = new { @class = "form-control" } })
+                        <span class="input-group-addon spanCreateLeagueDTP">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 text-right">
+                @Html.Label("Start Date", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="input-group date alignSpanDTP" id='dtpStartDate'>
+                        @Html.EditorFor(model => model.cLeague.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                        <span class="input-group-addon spanCreateLeagueDTP">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2 text-right">
+                @Html.Label("End Date", htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="input-group date alignSpanDTP" id='dtpEndDate'>
+                        @Html.EditorFor(model => model.cLeague.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                        <span class="input-group-addon spanCreateLeagueDTP">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div id="divPrivateLeaguePassword" class="hidden">
+                <div class="col-md-2 text-right">
+                    @Html.Label("Password", htmlAttributes: new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    <input type="password" name="lPwd" value="" placeholder="Enter Password people must enter to join league..." class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <br />
+        <div class="row">
+            <!--Add Stat Types and Values in a table-->
+            <input type="button" value="Add New Stat" class="btn btn-primary pull-right" onclick="AddStatTypeRow();" />
+            <table id="tblLeagueStatTypeValue" class="table table-bordered table-striped table-hover tableHome table-responsive">
+                <thead>
+                    <tr>
+                        <th class="col-xs-3 center">Stat Type Name</th>
+                        <th class="col-xs-2 center">Stat Type Code</th>
+                        <th class="col-xs-4 center">Stat Type Description</th>
+                        <th class="col-xs-2 center">Stat Type Value</th>
+                        <th class="col-xs-1 text-center"></th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyLeagueStatType" class="table-hover">
+                    @{
+                        int rowNum = 1;
+                    }
+                    @if (Model.list_DefaultStats != null && Model.list_DefaultStats.Count > 0)
+                    {
+                        foreach (var item in Model.list_DefaultStats)
+                        {
+                            <tr id="StatRow@(rowNum)">
+                                <td>
+                                    <input name="StatTypeName" type="text" value="@item.Name" placeholder="Enter name..." class="form-control" required />
+                                    <input name="StatTypeID" type="hidden" value="@item.StatTypeID" />
+                                </td>
+                                <td>
+                                    <input name="StatTypeCode" type="text" value="@item.NameCode" placeholder="Enter code..." class="form-control" required />
+                                </td>
+                                <td>
+                                    <textarea name="StatTypeDesc" placeholder="Enter description..." class="form-control">@item.Description</textarea>
+                                </td>
+                                <td>
+                                    <input name="StatTypeValue" type="number" value="@item.DefaultValue" placeholder="Enter value..." class="form-control" required />
+                                </td>
+                                <td>
+                                    <input type="button" class="btn btn-primary" value="Delete" onclick="DeleteStatRow('StatRow@(rowNum)');" />
+                                </td>
+                            </tr>
+                            @Html.Hidden("count", rowNum++)
+                        }
+                        @Html.Hidden("finalCount", rowNum)
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">
+                                <h3>
+                                    There was an error retrieving the default stats.
+                                    Please refresh the page, and if you get this error message again send us an email.
+                                </h3>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    @*<input type="submit" value="Create" class="hidden" id="triggerCreate" />*@
+                    <input type="button" value="Create" class="btn btn-primary" id="btnCreate" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Join A League Modal-->
+    <button id="triggerJoinLeagueModal" data-toggle="modal"
+            class="hidden" data-target="#modalJoinLeague"
+            data-backdrop="static"></button>
+    <div id="modalJoinLeague" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title text-center"><b>Create Your Team</b></h2>
+                </div>
+                <div id="modalJoinLeagueBody" class="modal-body">
+                    <div id="rowAjaxLoader" class="row hidden">
+                        <div class="col-sm-5"></div>
+                        <div id="divAjaxLoader" class="col-sm-3"></div>
+                        <div class="col-sm-4"></div>
+                    </div>
+                    <div id="divJoinLeague" class="hidden">
+                        @*@Html.Partial("_JoinLeague")*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closeJoinLeagueModal" data-dismiss="modal" class="btn btn-primary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Join A League Modal-->
+</fieldset>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/moment.min.js"></script>
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (('@ViewBag.LeagueError') != "") {
+                //unhide modal
+                $("#modalLeagueError").removeClass("hidden");
+                $("#triggerLeagueError").click();
+            } else {
+                //hide modal or keep it hidden
+                $("#modalLeagueError").addClass("hidden");
+            }
+
+            //Submit the form after setting the rowNum value
+            $("#btnCreate").click(function(){
+                $("#rowNum").val($("#tblLeagueStatTypeValue >tbody >tr").length);
+                $("#triggerJoinLeagueModal").click();
+                $("#rowAjaxLoader").removeClass("hidden");
+                $("#divAjaxLoader").removeClass("hidden").addClass("loader");
+                //$("#triggerCreate").click();
+                CreateLeague();
+            });
+
+            //Hide the password if not a private league
+            if ((@ViewBag.LeaguePrivate)) {
+                $("#divPrivateLeaguePassword").removeClass("hidden");
+            }
+
+            //Draft Date datepicker
+            //https://eonasdan.github.io/bootstrap-datetimepicker/
+            $('#dtpDraftDate').datetimepicker({
+                keepOpen: false
+            });
+            $('#dtpDraftDate').on("dp.change", function (e){
+                $("#dtpStartDate").data("DateTimePicker").minDate(moment(e.date).add('days',1));
+                $("#dtpEndDate").data("DateTimePicker").minDate(moment(e.date).add('days',2));
+            });
+
+            //Start Date datepicker
+            $('#dtpStartDate').datetimepicker({
+                format: "L",
+                useCurrent: false,
+                keepOpen: false
+            });
+            $('#dtpStartDate').on("dp.change", function (e){
+                $("#dtpEndDate").data("DateTimePicker").minDate(moment(e.date).add('days',1));
+            });
+
+            //End Date datepicker
+            $('#dtpEndDate').datetimepicker({
+                format: "L",
+                useCurrent: false,
+                keepOpen: false
+            });
+
+            function CreateLeague(){
+                console.log("Create League");
+                $("#divJoinLeague").html("");
+                $.ajax({
+                    type: "POST",
+                    url: "/League/Create",
+                    data: $("#CreateLeagueForm").serialize(),
+                    //dataType: "application/json",
+                    success: function (response) {
+                        if(response.substring(0,3) == "ERR"){
+                            console.log("CreateLeague SUCCESS![ERROR]");
+                            $("#divAjaxLoader").addClass("hidden").removeClass("loader");
+                            $("#rowAjaxLoader").addClass("hidden");
+                            $("#divJoinLeague").removeClass("hidden");
+                            $("#divJoinLeague").html("<h3>" + response + "</h3>");
+                        } else{
+                            console.log("CreateLeague SUCCESS!");
+                            $("#divAjaxLoader").addClass("hidden").removeClass("loader");
+                            $("#rowAjaxLoader").addClass("hidden");
+                            $("#divJoinLeague").removeClass("hidden");
+                            $("#divJoinLeague").html(response);
+                        }
+                    },
+                    error: function (response) {
+                        console.log("CreateLeague ERROR!");
+                        $("#divAjaxLoader").addClass("hidden").removeClass("loader");
+                        $("#rowAjaxLoader").addClass("hidden");
+                        $("#divJoinLeaguePartial").addClass("hidden");
+                        $("#JoinLeagueError").removeClass("hidden");
+                        $("#divJoinLeague").html(response);
+                    }
+                })
+            }
+        });
+
+        function AddStatTypeRow(){
+            var rowCount = parseInt($("#finalCount").val());
+            var rowNum = rowCount + 1;
+            $("#finalCount").val(rowNum)
+            $("#tblLeagueStatTypeValue > tbody:last-child").append('<tr id="' + "StatRow" + rowNum +'"><td>' +
+                    '<input name="StatTypeName" type="text" value="" placeholder="Enter name..." class="form-control" required />' +
+                    '<input name="StatTypeID" type="hidden" value="0"" /></td>' +
+                    '<td><input name="StatTypeCode" type="text" value="" placeholder="Enter code..." class="form-control" required /></td>' +
+                    '<td><textarea name="StatTypeDesc" placeholder="Enter description..." class="form-control"></textarea></td>' +
+                    '<td><input name="StatTypeValue" type="number" value="" placeholder="Enter value..." class="form-control" required /></td>' +
+                    '<td><input type="button" class="btn btn-primary" value="Delete" onclick="DeleteStatRow('+ "'StatRow" + rowNum + "'" +');" /></td></tr>'
+                    );
+            $("#rowNum").val(rowNum);
+        }
+
+        function DeleteStatRow(StatRowID){
+            $("#" + StatRowID).remove();
+        }
+    </script>
+}

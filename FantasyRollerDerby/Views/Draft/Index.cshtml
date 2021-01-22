@@ -1,0 +1,179 @@
+﻿@model FantasyRollerDerby.Models._Draft
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br /><img src="~/Images/DraftRoom.png" class="img-responsive" /><br /><br />
+
+<div class="row">
+    <p id="expiredDraftTracker" class="text-left hidden"> </p>
+    <p id="expiredPickTracker" class="text-left hidden"> </p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div style="overflow:auto;">
+            <table class="table table-bordered table-striped table-hover tableHome table-responsive">
+                <thead>
+                    <tr>
+                        <th class="center">Order#</th>
+                        <th class="center">Team</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int draftOrderNum = 1; }
+                    @foreach (var item in Model.list_DraftOrderTeams)
+                    {
+                        if (item.FantasyTeamID == Model.cFantasyTeam.FantasyTeamID)
+                        {
+                            <tr id="trDraftOrderNum@(draftOrderNum)" class="yourTeam">
+                                <td>@draftOrderNum</td>
+                                <td>@item.Name</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr id="trDraftOrderNum@(draftOrderNum)">
+                                <td>@draftOrderNum</td>
+                                <td>@item.Name</td>
+                            </tr>
+                        }
+                        @Html.Hidden("draftOrderNum", draftOrderNum = draftOrderNum + 1)
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <br /><br /><br /><br />
+            </div>
+        </div>
+
+        <div class="row-fluid DraftCompletedMessage hidden text-center">
+            <div class="col-sm-12">
+                <h4 class="draftHeaders">The Draft Has Completed</h4>
+            </div>
+        </div>
+        <div class="row-fluid DraftCompletedMessage hidden text-center">
+            <div class="col-sm-12">
+                @Html.ActionLink("Back to League", "Index", "League",
+                new
+                {
+                    leagueType = Model.cLeague.isPublic ? "public" : "private",
+                    leagueID = Model.cLeague.LeagueID,
+                    seasonID = Model.cSeason.SeasonID,
+                    fantasyTeamID = Model.cFantasyTeam.FantasyTeamID
+                },
+                new { @class = "btn btn-primary" })
+            </div>
+        </div>
+
+        <div class="row-fluid DraftCompleted text-left">
+            <div class="col-sm-12">
+                <h4 class="draftHeaders yourTeam">Your Team:</h4>
+                &nbsp;&nbsp;
+                <h4 id="YourTeam" class="draftHeaders">@Model.cFantasyTeam.Name</h4>
+            </div>
+        </div>
+        <div class="row-fluid DraftCompleted text-left">
+            <div class="col-sm-12">
+                <h4 class="draftHeaders OnTheClock">On The Clock:</h4>
+                &nbsp;&nbsp;
+                <h4 id="TeamDraftingMeow" class="draftHeaders"></h4>
+            </div>
+        </div>
+        <div class="row-fluid DraftCompleted text-left">
+            <div class="col-sm-12">
+                <h4 class="draftHeaders">Draft Time Left:</h4>
+                &nbsp;&nbsp;
+                <h4 id="draftTimer" class="draftHeaders"> </h4>
+            </div>
+        </div>
+        <div class="row-fluid DraftCompleted text-left">
+            <div class="col-sm-12">
+                <h4 id="TeamDraftTime" class="draftHeaders">Time Left To Pick:</h4>
+                &nbsp;&nbsp;
+                <h4 id="pickTimer" class="draftHeaders"> </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <img id="draftFantasyTeamLogo" 
+                     src="~/Images/TeamLogos/defaultTeamLogo.png" 
+                     class="img-responsive draftTeamLogo text-left" />
+            </div>
+        </div>
+    </div>
+</div>
+<br /><br />
+<div id="divSkatersSelect" class="row mobileText" style="overflow:auto;height:650px;">
+    <table id="tblSkaters" class="table table-bordered table-striped table-hover tableHome table-responsive">
+        <thead>
+            <tr id="tblSkatersHeaderRow">
+                <th class="col-sm-2 center">Derby Team</th>
+                <th class="col-sm-2 center">Derby Name</th>
+                <th class="col-sm-1 center">Derby #</th>
+                <th class="col-sm-2 center">Photo</th>
+                <th class="col-sm-3 center">Select</th>
+            </tr>
+        </thead>
+        <tbody id="tbodySkaters" class="table-hover">
+            @{ int rowNum = 1; }
+            @foreach (var item in Model.list_cSkater)
+            {
+                <tr id="row@(item.SkaterID)" name="tr@(item.SkaterID)">
+                    <td> @item.DerbyTeamName </td>
+                    <td> @item.DerbyName </td>
+                    <td> @item.DerbyNumber </td>
+                    <td>
+                        <img src="/Images/Skaters/@item.Photo"
+                             class="img-responsive" style="max-height:100px;" />
+                    </td>
+                    <td>
+                        <button id="Skater@(item.SkaterID)"
+                                onclick="DraftMe('@item.SkaterID');"
+                                class="btn btn-primary btnDraftSkater disableMe">
+                            Draft Me!
+                        </button>
+                        <h3 id="FantasyTeam@(item.SkaterID)" class="drafted text-center hidden">Drafted!</h3>
+                    </td>
+                </tr>
+                @Html.Hidden("RowCount", rowNum = rowNum + 1)
+            }
+        </tbody>
+    </table>
+</div>
+
+<input type="hidden" id="rowNum" value="none" />
+<input type="hidden" id="teamName" value="none" />
+<input type="hidden" id="leagueName" value="@Model.cLeague.LeagueName" />
+<input type="hidden" id="teamID" value="@Model.cFantasyTeam.FantasyTeamID" />
+<input type="hidden" id="skaterID" value="none" />
+<input type="hidden" id="seasonID" value="@Model.cFantasyTeam.SeasonID" />
+<input type="hidden" id="userID" value="@Model.cUser.UserID" />
+<input type="hidden" id="draftDateTime" value="@Model.cSeason.DraftDate" />
+<input type="hidden" id="totalDraftTime" value="@ViewBag.TotalDraftTime" />
+<input type="hidden" id="draftOrderIDs" value="@Model.cSeason.DraftOrder" />
+<input type="hidden" id="totalPicks" value="@ViewBag.TotalPicks" />
+<input type="hidden" id="totalRounds" value="@Model.cSeason.RosterSize" />
+<input type="hidden" id="timePerPick" value="@Model.cSeason.DraftTimePerTeam" />
+<input type="hidden" id="totalTeams" value="@Model.list_SeasonFantasyTeams.Count" />
+<input type="hidden" id="currentPickTeamID" value="@Model.cSeason.CurrentPickFantasyTeamID" />
+<input type="hidden" id="draftOrderTeamNames" value="@ViewBag.DraftOrderNames" />
+<input type="hidden" id="draftOrderGeneric" value="@ViewBag.GenericDraftOrder" />
+<input type="hidden" id="draftOrderTeamLogos" value="@ViewBag.DraftOrderTeamLogos" />
+<input type="hidden" id="userTeamID" value="@Model.cFantasyTeam.FantasyTeamID" />
+<input type="hidden" id="triggerSignalR" value="trigger" />
+<input type="hidden" id="Random" value="@ViewBag.Random" />
+<input type="hidden" id="scrollToCount" value="0" />
+
+@section scripts {
+    <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="~/signalr/hubs/"></script>
+    <script src="~/Scripts/Draft.js"></script>
+}

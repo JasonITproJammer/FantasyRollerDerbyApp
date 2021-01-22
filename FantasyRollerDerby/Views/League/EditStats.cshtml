@@ -1,0 +1,174 @@
+﻿@model FantasyRollerDerby.Models._League
+
+@{
+    ViewBag.Title = "EditStats";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Edit/Add Player Stats</h2>
+
+@using (Html.BeginForm("EditStats", "League", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.cUser.UserID)
+    @Html.HiddenFor(m => m.cUser.AspNetUserID)
+    @Html.HiddenFor(m => m.cLeague.LeagueID)
+    @Html.HiddenFor(m => m.cLeague.SeasonID)
+    @Html.HiddenFor(m => m.cFantasyTeam.FantasyTeamID)
+
+    if (ViewBag.SeasonEnded == null)
+    {
+        <!--v ADD Skater Game Stats v-->
+        <table id="tblAddSkaterGameStats" class="table table-bordered table-striped table-hover tableHome table-responsive">
+            <thead>
+                <tr>
+                    <th>Skater</th>
+                    <th>Stat Type</th>
+                    <th>Game Date</th>
+                    <th>Game Stat Value</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="table-hover">
+                <tr id="defaultStatRow">
+                    <td>
+                        @if (Model.list_Skater != null)
+                    {
+                            @Html.DropDownListFor(m => m.cSkater.SkaterID, new SelectList(Model.list_Skater, "SkaterID", "DerbyName"), "Select Skater", new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            <select>
+                                <option value="default">No Skaters...</option>
+                            </select>
+                        }
+                    </td>
+                    <td>
+                        @if (Model.list_cStatType != null)
+                    {
+                            @Html.DropDownListFor(m => m.cStatType.StatTypeID, new SelectList(Model.list_cStatType, "StatTypeID", "Name"), "Select Stat Type", new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            <select>
+                                <option value="default">No Stats...</option>
+                            </select>
+                        }
+                    </td>
+                    <td>
+                        <input name="GameDate" type="date" class="form-control" min="@ViewBag.MinDate" max="@ViewBag.MaxDate" />
+                    </td>
+                    <td>
+                        <input name="StatValue" type="number" value="0.00" placeholder="Enter value..." class="form-control" required />
+                    </td>
+                    <td>
+                        <input type="button" value="Add" class="btn btn-primary" onclick="AddSkaterGameStatRow();" />
+                    </td>
+                    <td>
+                        <input id="deleteRow" type="button" value="Delete" class="btn btn-primary deleteRow" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="Save" class="btn btn-primary pull-right" /><br />
+        <!--^ ADD Skater Game Stats ^-->
+        <br />
+    }
+
+
+    <br />
+    <!--v Skater Game Stats v-->
+    <div class="row">
+        <div id="divSkaterGameStatsGrid">
+            @if (Model.list_SkaterGameStats != null && Model.list_SkaterGameStats.Count > 0)
+                {
+                    WebGrid gridSkaterGameStats = new WebGrid(Model.list_SkaterGameStats, rowsPerPage: 5,
+                        sortFieldName: "gridSkaterGameStatsSort", ajaxUpdateContainerId: "divSkaterGameStatsGrid");
+                @gridSkaterGameStats.GetHtml(tableStyle: "table table-bordered table-striped table-hover tableHome table-responsive",
+                 htmlAttributes: new { id = "gridSkaterGameStats" },
+                 headerStyle: "",
+                 footerStyle: "",
+                 alternatingRowStyle: "",
+                 columns: gridSkaterGameStats.Columns(
+                     gridSkaterGameStats.Column("Skater", header: " ",
+                         format:
+                        @<div class="text-center">
+                            <img class="img-responsive memberListLogo" src="~/Images/Skaters/@item.Photo" /><br />
+                            @item.DerbyName
+                        </div>
+                        ),
+                    gridSkaterGameStats.Column("Stat", header: "Stat Type", format: (item) => item.StatTypeNameCode),
+                    gridSkaterGameStats.Column("GameDate", header: "Game Date", format: (item) => string.Format("{0:MM/dd/yyyy}", item.GameDate)),
+                    gridSkaterGameStats.Column("TotalSkaterGameStatValue", header: "Points Earned", format: (item) => item.TotalSkaterGameStatValue)
+                    ))
+            }
+            else
+            {
+                <table id="gridSkaterGameStats" class="table table-bordered table-striped table-hover tableHome">
+                    <thead>
+                        <tr class="text-center">
+                            <th scope="col" class="text-center">Skater</th>
+                            <th scope="col" class="text-center">Stat Type</th>
+                            <th scope="col" class="text-center">Game Date</th>
+                            <th scope="col" class="text-center">Points Earned</th>
+                        </tr>
+                    </thead>
+                </table>
+                <h3 class="text-center">No Results</h3>
+            }
+        </div>
+    </div>
+    <!--^ Skater Game Stats ^-->
+}
+
+<div>
+    @Html.ActionLink("Back to League", "Index", "League",
+    new
+    {
+        leagueType = Model.cLeague.isPublic ? "public" : "private",
+        leagueID = Model.cLeague.LeagueID,
+        seasonID = Model.cLeague.SeasonID,
+        fantasyTeamID = Model.cFantasyTeam.FantasyTeamID
+    },
+    new { @class = "btn btn-primary" })
+</div>
+
+<!--Error Modal-->
+<button id="triggerLeagueError" data-toggle="modal" class="hidden" data-target="#modalLeagueError"></button>
+<div id="modalLeagueError" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>League Page Error</b></h2>
+            </div>
+            <div class="modal-body">
+                <div class="danger row">
+                    <h4 class="text-center">@ViewBag.LeagueError</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close the notification***<br /></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Error Modal-->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#tblAddSkaterGameStats').on('click', '.deleteRow', function (e) {
+                $(this).closest('tr').remove()
+            })
+        });
+
+        function AddSkaterGameStatRow() {
+            var rowCount = $("#tblAddSkaterGameStats >tbody >tr").length;
+            var rowNum = rowCount + 1;
+            $("#tblAddSkaterGameStats > tbody:last-child").append("<tr id='rowSkaterStat" + rowNum + "'>" + $("#defaultStatRow").html() + "</tr>");
+            $("#rowNum").val(rowNum);
+        }
+    </script>
+}

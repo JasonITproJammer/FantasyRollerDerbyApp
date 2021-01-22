@@ -1,0 +1,214 @@
+﻿@model FantasyRollerDerby.Models.League
+
+@{
+    ViewBag.Title = "EditLeague";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.isPublic)
+{
+    <h2 class="text-center">Edit Public League: @Model.LeagueName</h2>
+}
+else
+{
+    <h2 class="text-center">Edit Private League: @Model.LeagueName</h2>
+}
+<br />
+
+@using (Html.BeginForm("EditLeague", "League", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.LeagueID)
+    @Html.HiddenFor(model => model.CommissionerUserID)
+    @Html.HiddenFor(model => model.SeasonID)
+    @Html.HiddenFor(model => model.FantasyTeamID)
+
+    <div id="divEditLeague" class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.Label("League Name", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LeagueName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LeagueName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Max Teams", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MaxTeams, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MaxTeams, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Teams In The League", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.Teams, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Draft Date and Time", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DraftDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DraftDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Start Date", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("End Date", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.CreateByUserID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.CreateByUserID, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.Label("League Inception Date", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.CreateDate, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.isPublic, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.DisplayFor(model => model.isPublic, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+        </div>*@
+
+        @if (ViewBag.IsPrivate == true)
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+
+        <div class="form-group">
+            @Html.Label("Draft Time Per Team (seconds)", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DraftTimePerTeam, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DraftTimePerTeam, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Roster Size", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.RosterSize, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.RosterSize, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @if (ViewBag.SeasonEnded == null || ViewBag.IsDeutsch)
+        {
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to League", "Index", "League",
+    new
+    {
+        leagueType = Model.isPublic ? "public" : "private",
+        leagueID = Model.LeagueID,
+        seasonID = Model.SeasonID,
+        fantasyTeamID = Model.FantasyTeamID
+    },
+    new { @class = "btn btn-primary" })
+</div>
+
+<!--Error Modal-->
+<button id="triggerLeagueError" data-toggle="modal" class="hidden" data-target="#modalLeagueError"></button>
+<div id="modalLeagueError" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-center"><b>League Page Error</b></h2>
+            </div>
+            <div class="modal-body">
+                <div class="danger row">
+                    <h4 class="text-center">@ViewBag.LeagueError</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <h6 class="text-center">***click outside this window to close the notification***<br /></h6>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Error Modal-->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (('@ViewBag.LeagueError') != "") {
+                //unhide modal
+                $("#modalLeagueError").removeClass("hidden");
+                $("#triggerLeagueError").click();
+            } else {
+                //hide modal or keep it hidden
+                $("#modalLeagueError").addClass("hidden");
+            }
+
+            if (('@ViewBag.SeasonEnded') != "" && ('@ViewBag.IsDeutsch') == "") {
+                $("#divEditLeague :input").attr("disabled", true);
+            }
+        });
+
+        function UpdateDraftDateTime() {
+            var draftDateTime = $("#cLeague_DraftDate").val();
+            var seasonID = $("#cLeague_SeasonID").val();
+            $.ajax({
+                type: "POST",
+                url: "/League/UpdateDraftDateTime",
+                data: { draftDateTime: draftDateTime, seasonID: seasonID },
+                success: function (response) {
+                    console.log(response);
+                }
+            })
+        }
+
+        function UpdateDraftTimePerTeam() {
+            var draftTimePerTeam = $("#cSeason_DraftTimePerTeam").val();
+            var seasonID = $("#cLeague_SeasonID").val();
+            $.ajax({
+                type: "POST",
+                url: "/League/UpdateDraftTimePerTeam",
+                data: { draftTimePerTeam: draftTimePerTeam, seasonID: seasonID },
+                success: function (response) {
+                    console.log(response);
+                }
+            })
+        }
+    </script>
+}
